@@ -30,8 +30,8 @@
         <h1>mazeGen<button class="themebtn" on:click={()=>{theme = !theme}}>{theme ? "☀" : "☾"}</button></h1>
         <h3>made by <a href="https://jonnelafin.github.io">jonnelafin</a></h3>
         <p>If you have no idea what to do with any of these controls, just press "Start" and you will get a nice maze.</p>
-        Width: <input type="number" bind:value={w}/>
-        Height: <input type="number" bind:value={h}/>
+        <div class="base-input">Width:  <input type="number" bind:value={w}/></div>
+        <div class="base-input">Height: <input type="number" bind:value={h}/></div>
         <br />
         <details>
             <summary>Advanced</summary>
@@ -81,6 +81,11 @@
     }
     .themebtn{
         float: right;
+    }
+    .base-input{
+        display: inline-block;
+        font-family: monospace;
+        white-space: break-spaces;
     }
     .main-buttons{
 

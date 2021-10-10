@@ -210,4 +210,9 @@
     .dots{
         flex: 0 0 var(--bwidth);
     }
+    @media (max-width: 510px) {
+        .maze{
+            transform: scale(0.5);
+        }
+    }
 </style>
