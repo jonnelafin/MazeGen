@@ -29,30 +29,36 @@
     <div class="layout">
         <h1>mazeGen<button class="themebtn" on:click={()=>{theme = !theme}}>{theme ? "☀" : "☾"}</button></h1>
         <h3>made by <a href="https://jonnelafin.github.io">jonnelafin</a></h3>
-        <p>If you have no idea what to do with all of these controls, just press "Start".</p>
+        <p>If you have no idea what to do with any of these controls, just press "Start" and you will get a nice maze.</p>
         Width: <input type="number" bind:value={w}/>
         Height: <input type="number" bind:value={h}/>
         <br />
-        Show raw: <input type="checkbox" bind:checked={showRaw} />
-        Show final: <input type="checkbox" bind:checked={showFinal} />
-        Show stack: <input type="checkbox" bind:checked={showStack} />
-        <br />
-        <button on:click={ ()=>{ b.forward() } }>Step</button>
-        Delay: <input type="number" bind:value={delay}/>
-        <button on:click={ ()=>{ timer = setInterval( ()=>{b.forward()}, delay) } }>Start</button>
-        <button on:click={ ()=>{ if(timer){clearInterval(timer)} } }>Stop</button>
-        <button on:click={()=>{ boardID = {}; if(timer){clearInterval(timer);timer=undefined;} started = false; final = undefined;stackLen = 1;}}>Reset</button>
+        <details>
+            <summary>Advanced</summary>
+            <hr />
+            Show raw: <input type="checkbox" bind:checked={showRaw} /><br />
+            Show final: <input type="checkbox" bind:checked={showFinal} /><br />
+            Show stack: <input type="checkbox" bind:checked={showStack} /><br />
+            Delay: <input type="number" bind:value={delay}/><br />
+            <button on:click={ ()=>{final = b.assembleMaze(w, h)} } >Rerender maze</button>
+            <button on:click={ ()=>{final = undefined} } >Clear render</button><br /><br />
+            <button on:click={ ()=>{ b.forward() } }>Advance a Step</button><br />
+            <hr />
+        </details>
+        <div class="main-buttons">
+            <button on:click={ ()=>{ timer = setInterval( ()=>{b.forward()}, delay) } }>Start</button>
+            <button on:click={ ()=>{ if(timer){clearInterval(timer)} } }>Stop</button>
+            <button on:click={()=>{ boardID = {}; if(timer){clearInterval(timer);timer=undefined;} started = false; final = undefined;stackLen = 1;}}>Reset</button>
+            <p class="stacklen">Stack length: {stackLen}</p>
+        </div>
         <br />
         {#key boardID}
             <Board bind:this={b} bind:stack={stack} bind:final={final} bind:WIDTH={w} bind:HEIGHT={h} bind:stackLen={stackLen} bind:started={started} bind:showA={showRaw} bind:showB={showFinal} />
         {/key}
-        Stack length: {stackLen} 
         {#if showStack}
             <StackVisual bind:stack={stack} />
         {/if}
         <br />
-        <button on:click={ ()=>{final = b.assembleMaze(w, h)} } >Rerender maze</button>
-        <button on:click={ ()=>{final = undefined} } >Clear render</button>
     </div>
 </main>
 
@@ -70,10 +76,16 @@
         height: calc(100% - 2em);
     }
     .layout{
-        width: 50%;
+        width: 550px;
         margin: 0 auto;
     }
     .themebtn{
+        float: right;
+    }
+    .main-buttons{
+
+    }
+    .stacklen{
         float: right;
     }
     @media (max-width: 1000px) {

@@ -156,12 +156,12 @@
 </script>
 
 
-<main>
+<main style="--bwidth:{canvasWidth}px !important;">
     {#if showA}
         <div class="dots">
-            {#each data as row}
-                {#each row as n}
-                    <NodeVisual bind:myNode={n} bind:stack={stack} />
+            {#each data[0] as row, x}
+                {#each data as n, y}
+                    <NodeVisual bind:myNode={data[y][x]} bind:stack={stack} />
                 {/each}
                 <br />
             {/each}
@@ -169,7 +169,7 @@
         <br />
     {/if}
     {#if showB}
-        <div class="maze" style="width:{canvasWidth}px !important;">
+        <div class="maze">
             {#if final}
                 {#each final as row}
                     <div class="mazerow">
@@ -184,21 +184,30 @@
 </main>
 
 <style>
+    main{
+        display: flex;
+        --bwidth: 500px;
+        width: 100%;
+        height: 500px;
+        justify-content: center;
+    }
     .mazerow{
         flex: 1;
         display: flex;
         flex-direction: row;
     }
     .maze{
+        flex: 0 0 var(--bwidth);
         /* transform: rotate(-90deg); */
-        width: 500px;
-        height: 500px;
+        /* width: 500px;
+        height: 500px; */
 
         display: flex;
         flex-direction: column;
         background: gray;
         padding: 2px;
     }
-    main{
+    .dots{
+        flex: 0 0 var(--bwidth);
     }
 </style>
