@@ -72,21 +72,30 @@
     export let started = false;
     export let stack: node[] = [data[0][0]];
     export let stackLen = 0;
+    export let visitedCells = 0;
+    let maxStackLen = 0;
     export function forward(){
         if(!started){
             started = true;
             stack = [data[0][0]];
+            maxStackLen = 0;
+            visitedCells = 0;
         }
         if(stack.length > 0){
             let firstElement = stack.slice(-1).pop();
             firstElement.visited = true; // kind of pointless failsafe
+            if(!firstElement.distance){
+                firstElement.distance = 0;
+            }
             let next = chooseNeighbour(firstElement);
             if(next){
                 firstElement.connections.push(next);
                 firstElement.idconnections.push(next.id);
                 next.connections.push(firstElement);
                 next.idconnections.push(firstElement.id);
+                next.distance = stack.length;
                 stack.push(next);
+                visitedCells++;
             }
             else{
                 stack.pop();
@@ -94,6 +103,9 @@
 
 
 
+            if(stack.length > maxStackLen){
+                maxStackLen = stack.length;
+            }
             stack = stack;
             data = data;
             if(showB){
@@ -103,6 +115,7 @@
         else{
             console.log("Stack empty!")
             if(!final){
+                visitedCells = WIDTH * HEIGHT + 1;
                 console.log("Assembling maze...");
                 final = assembleMaze(WIDTH, HEIGHT);
             }
@@ -110,6 +123,7 @@
         stackLen = stack.length;
     }
     export let final: boolean[][];
+    export let finalMap: node[][] = createMaze((HEIGHT*2)-1, (WIDTH*2)-1);
     function createMaze(w: number, h:number){
         let newMaze = [];
         for(let x = 0; x < w; x++){
@@ -126,6 +140,7 @@
         let mazew = (w*2)-1;
         let mazeh = (h*2)-1;
         let maze: boolean[][] = createMaze(mazeh, mazew); // Flip the coordinates, as this is a more logical way to look at them irl
+        finalMap = createBoard(mazeh, mazew);
 
         for(let x = 0; x < w; x++){
             let row = data[x];
@@ -135,23 +150,26 @@
                 let mazey = y*2;
 
                 maze[mazey][mazex] = true;
+                finalMap[mazey][mazex] = datablock;
 
                 let hasConnectionRight = false;
                 if(datablock.nRight){
                     hasConnectionRight = datablock.connections.includes(datablock.nRight);
                     maze[mazey][mazex + 1] = hasConnectionRight;
+                    finalMap[mazey][mazex + 1] = datablock;
                 }
                 let hasConnectionDown = false;
                 if(datablock.nDown){
                     hasConnectionDown = datablock.connections.includes(datablock.nDown);
                     maze[mazey + 1][mazex] = hasConnectionDown;
+                    finalMap[mazey + 1][mazex] = datablock;
                 }
 
             }
         }
         return maze;
     }
-    $: console.log("Stack: ", stack);
+    //$: console.log("Stack: ", stack);
     //$: console.log("Board: ", data)
 </script>
 
@@ -171,10 +189,10 @@
     {#if showB}
         <div class="maze">
             {#if final}
-                {#each final as row}
+                {#each final as row, x}
                     <div class="mazerow">
-                    {#each row as n}
-                        <MazeBlockVisual bind:value={n} />
+                    {#each row as n, y}
+                        <MazeBlockVisual bind:value={n} originalNode={finalMap[x][y]} maxStackLen={maxStackLen}/>
                     {/each}
                     </div>
                 {/each}
@@ -205,14 +223,18 @@
         display: flex;
         flex-direction: column;
         background: gray;
+        background: #1c1c1c;
         padding: 2px;
     }
     .dots{
         flex: 0 0 var(--bwidth);
     }
     @media (max-width: 510px) {
-        .maze{
+        main{
             transform: scale(0.5);
         }
+        /* .maze{
+            transform: scale(0.5);
+        } */
     }
 </style>

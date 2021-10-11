@@ -12,6 +12,8 @@ class node{
     neighbours: Array<node>
     id: number
     // 
+    distance: number
+    // 
     constructor(nodex: number, nodey: number){
         this.x = nodex;
         this.y = nodey;
