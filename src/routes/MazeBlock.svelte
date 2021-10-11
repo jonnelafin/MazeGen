@@ -3,6 +3,10 @@
     export let value: boolean;
     export let originalNode: node;
     export let maxStackLen;
+
+    export let colorDepth: boolean;
+    export let color: string;
+    export let wallColor: string;
     let distance = 0;
     $: if(originalNode){
         distance = originalNode.distance
@@ -11,7 +15,7 @@
     $: fv = (distance/maxStackLen)
 </script>
 
-<main style="background:{value ? ("rgb(" + fv*255 + "," + 0 + "," + 255 + ")") : "#1c1c1c"};">
+<main style="background:{value ? ( colorDepth ? ("rgb(" + fv*255 + "," + 0 + "," + 255 + ")") : color ) : wallColor};">
     <!-- {value ? "#" : "."} -->
 </main>
 

@@ -12,9 +12,13 @@
     let stackLen = 1;
     let started = false;
     let showRaw = false;
+    let showASCII = false;
     let showFinal = true;
     let showStack = false;
     let showHead = true;
+    let colorDepth = false;
+    let color = "#8FF0A4";
+    let wallColor = "#1c1c1c";
     let stack;
     let delay = 10;
     $: if(stackLen == 0 && timer){
@@ -34,13 +38,17 @@
         <p>If you have no idea what to do with any of these controls, just press "Start" and you will get a nice maze.</p>
         <div class="base-input">Width:  <input type="number" bind:value={w}/></div>
         <div class="base-input">Height: <input type="number" bind:value={h}/></div>
+        <div class="base-input">Path Color: <input type="color" bind:value={color} /></div>
+        <div class="base-input">Wall Color: <input type="color" bind:value={wallColor} /></div>
         <br />
         <details>
             <summary>Advanced</summary>
             <hr />
+            Color by depth: <input type="checkbox" bind:checked={colorDepth} /><br /><br />
             Show raw: <input type="checkbox" bind:checked={showRaw} /><br />
             Show final: <input type="checkbox" bind:checked={showFinal} /><br />
-            Show stack: <input type="checkbox" bind:checked={showStack} /><br />
+            Show ASCII: <input type="checkbox" bind:checked={showASCII} /><br />
+            Show stack: <input type="checkbox" bind:checked={showStack} /><br /><br />
             <!-- Show stack head: <input type="checkbox" bind:checked={showHead} /><br /> -->
             Delay: <input type="number" bind:value={delay}/><br />
             <button on:click={ ()=>{final = b.assembleMaze(w, h)} } >Rerender maze</button>
@@ -61,12 +69,14 @@
         </div>
         <br />
         {#key boardID}
-            <Board bind:this={b} bind:stack={stack} bind:final={final} bind:WIDTH={w} bind:HEIGHT={h} bind:stackLen={stackLen} bind:started={started} bind:showA={showRaw} bind:showB={showFinal} bind:visitedCells={visitedCells} />
+            <Board bind:this={b} bind:stack={stack} bind:final={final} bind:WIDTH={w} bind:HEIGHT={h} bind:stackLen={stackLen} bind:started={started} bind:showA={showRaw} bind:showB={showFinal} bind:visitedCells={visitedCells} bind:colorDepth={colorDepth} bind:color={color} bind:wallColor={wallColor} bind:showC={showASCII} />
         {/key}
         {#if showStack}
             <StackVisual bind:stack={stack} />
         {/if}
-        <progress value={(visitedCells+1)/(w*h)} />
+        {#if w && h && w*h != 0}
+            <progress value={(visitedCells+1)/(w*h)} />
+        {/if}
         <br />
     </div>
 </main>
@@ -83,6 +93,7 @@
         width: 100%;
         padding: 1em 0;
         height: calc(100% - 2em);
+        overflow-y: scroll;
     }
     .layout{
         width: 550px;

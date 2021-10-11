@@ -8,6 +8,11 @@
 
     export let showA = false;
     export let showB = false;
+    export let showC = false;
+
+    export let colorDepth: boolean;
+    export let color: string;
+    export let wallColor: string;
 
     let canvasWidth = 500;
     $: canvasWidth = 500 * (WIDTH / HEIGHT)
@@ -108,7 +113,7 @@
             }
             stack = stack;
             data = data;
-            if(showB){
+            if(showB || showC){
                 final = assembleMaze(WIDTH, HEIGHT);
             }
         }
@@ -187,14 +192,26 @@
         <br />
     {/if}
     {#if showB}
-        <div class="maze">
+        <div class="maze" style="background: {wallColor};">
             {#if final}
                 {#each final as row, x}
                     <div class="mazerow">
                     {#each row as n, y}
-                        <MazeBlockVisual bind:value={n} originalNode={finalMap[x][y]} maxStackLen={maxStackLen}/>
+                        <MazeBlockVisual bind:value={n} originalNode={finalMap[x][y]} maxStackLen={maxStackLen} colorDepth={colorDepth} color={color} wallColor={wallColor} />
                     {/each}
                     </div>
+                {/each}
+            {/if}
+        </div>
+    {/if}
+    {#if showC}
+        <div class="ASCII">
+            {#if final}
+                {#each final as row, x}
+                    {#each row as n, y}
+                        {n ? "#" : " "}
+                    {/each}
+                    <br />
                 {/each}
             {/if}
         </div>
@@ -224,10 +241,15 @@
         flex-direction: column;
         background: gray;
         background: #1c1c1c;
-        padding: 2px;
+        padding: 0; /*2px*/
     }
     .dots{
         flex: 0 0 var(--bwidth);
+    }
+    .ASCII{
+        font-family: monospace;
+        white-space: pre;
+        line-height: 1em;
     }
     @media (max-width: 510px) {
         main{
